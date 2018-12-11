@@ -1,0 +1,23 @@
+{
+  "name": "reddit-database",
+  "version": "1.0.0",
+  "description": "Converting Reddit json-database to MySQL",
+  "main": "convert.js",
+  "scripts": {
+    "start": "npm run build"
+  },
+  "keywords": [
+    "Reddit",
+    "JSON",
+    "DataBase",
+    "MySQL"
+  ],
+  "author": "Johan Söderlund",
+  "license": "MIT",
+  "dependencies": {
+    "eslint": "^5.9.0",
+    "line-by-line": "^0.1.6",
+    "mysql": "^2.16.0"
+  },
+  "devDependencies": {}
+}
