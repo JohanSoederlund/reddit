@@ -5,6 +5,7 @@ var RC_2007 = 'jsonDataBase/RC_2007-10';
 var RC_2007_small = 'jsonDataBase/RC_2007-10-small';
 var RC_2011 = 'jsonDataBase/RC_2011-07';
 var RC_2012 = 'jsonDataBase/RC_2012-12';
+var test = 'jsonDataBase/testQ';
 
 var con;
 var lines = [];
@@ -12,7 +13,7 @@ var index = 0;
 var index2 = 1;
 var totalMillieSeconds = 0;
 
-connect(RC_2011);
+connect(RC_2012);
 
 /**
  * Connects to databse.
@@ -97,9 +98,9 @@ function readJSON(fileAdr) {
             lr.pause();
             insertIntoComments(lines)
             .then( ()=> {
-                lr.resume();
                 index = 0;
                 lines = [];
+                lr.resume();
             });
 
         }
@@ -111,6 +112,10 @@ function readJSON(fileAdr) {
      * Write timestamps to logfile.
      */
     lr.on('end', function () {
+        console.log(index*index2 + " total records.");
+        if(index > 0) {
+            insertIntoComments(lines);
+        }
         console.log("\n\n");
         console.log("All lines are read, file is closed now.");
     });
@@ -168,9 +173,9 @@ function createDatabase(callback) {
 function createCommentsTable(constraints) {
     //todo: add constraints
     if(constraints) {
-        var sql = "CREATE TABLE comments (id VARCHAR(255), parent_id VARCHAR(255), link_id VARCHAR(255), name VARCHAR(255), author VARCHAR(255), body MEDIUMTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, subreddit_id VARCHAR(255), subreddit VARCHAR(255), score VARCHAR(255), created_utc VARCHAR(255))";
+        var sql = "CREATE TABLE comments (id VARCHAR(10) PRIMARY KEY, parent_id VARCHAR(10) NOT NULL, link_id VARCHAR(10) NOT NULL, name VARCHAR(20) NOT NULL, author VARCHAR(20) NOT NULL, body MEDIUMTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL, subreddit_id VARCHAR(10) NOT NULL, subreddit VARCHAR(20) NOT NULL, score INT, created_utc VARCHAR(10) NOT NULL)";
     } else {
-        var sql = "CREATE TABLE comments (id VARCHAR(255), parent_id VARCHAR(255), link_id VARCHAR(255), name VARCHAR(255), author VARCHAR(255), body MEDIUMTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, subreddit_id VARCHAR(255), subreddit VARCHAR(255), score VARCHAR(255), created_utc VARCHAR(255))";
+        var sql = "CREATE TABLE comments (id VARCHAR(10), parent_id VARCHAR(10), link_id VARCHAR(10), name VARCHAR(20), author VARCHAR(20), body MEDIUMTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, subreddit_id VARCHAR(10), subreddit VARCHAR(20), score INT, created_utc VARCHAR(10))";
     }
 
     return new Promise((resolve) => {
@@ -187,7 +192,6 @@ function createCommentsTable(constraints) {
  */
 function dropCommentsTable () {
     var sql = "DROP TABLE comments";
-
     return new Promise((resolve) => {
         con.query(sql, function (err, result) {
             if (err) throw err;
