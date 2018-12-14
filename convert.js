@@ -7,33 +7,47 @@ var RC_2011 = 'jsonDataBase/RC_2011-07';
 var RC_2012 = 'jsonDataBase/RC_2012-12';
 var test = 'jsonDataBase/testQ';
 
+var dbRC_2007 = "RC_2007";
+var dbRC_2011 = "RC_2011";
+var dbRC_2011Index = "RC_2011_index";
+var dbRC_2012 = "RC_2012";
+var dbTest = "test";
+
 var con;
 var lines = [];
 var index = 0;
 var index2 = 1;
 var totalMillieSeconds = 0;
 
-connect(RC_2012);
+connect(RC_2012, dbRC_2012);
 
 /**
  * Connects to databse.
  * Todo: Write timestamps to logfile.
  */
-function connect(fileAdr) {
+function connect(fileAdr, dbName) {
 
     con = mysql.createConnection({
         host: "localhost",
         user: "root",
         password: "",
-        database: "reddit"
+        database: dbName
       });
-      
+      /**
+       * To create database before creating table use this code below.
+       *
+    con.connect(function(err) {
+        createDatabase(dbName)
+        .then((result) => { 
+            console.log(result);
+            con.end();
+            });
+      });
+      */
     con.connect(function(err) {
         if (err) throw err;
         console.log("Connected!");
         try {
-            //createDatabase();
-
             dropCommentsTable()
             .then((result) => {
                 console.log(result);
@@ -48,6 +62,9 @@ function connect(fileAdr) {
                 console.log(err);
             });
 
+            /**
+             * To query after created databse, use code below.
+             */
             //var queryAll = "SELECT * FROM comments";
             //query(queryAll);
         } catch (error) {
@@ -118,6 +135,8 @@ function readJSON(fileAdr) {
         }
         console.log("\n\n");
         console.log("All lines are read, file is closed now.");
+
+        con.end();
     });
 }
 
@@ -156,26 +175,27 @@ function query(sql) {
 
 /**
  * Create a new Database.
- * @param {function} callback 
  */
-function createDatabase(callback) {
-    return con.query("CREATE DATABASE reddit", function (err, result) {
-        if (err) throw err;
-        console.log("Database created");
-        callback(result);
+function createDatabase(name) {
+    return new Promise((resolve) => {
+        var query = "CREATE DATABASE "+name;
+        con.query(query, function (err, result) {
+            if (err) throw err;
+            console.log("Database created");
+            resolve(result);
+        });
     });
-}
+}   
 
 /**
  * Create comments table in connected database.
  * @param {boolean} constraints use constarints for the table
  */
 function createCommentsTable(constraints) {
-    //todo: add constraints
     if(constraints) {
-        var sql = "CREATE TABLE comments (id VARCHAR(10) PRIMARY KEY, parent_id VARCHAR(10) NOT NULL, link_id VARCHAR(10) NOT NULL, name VARCHAR(20) NOT NULL, author VARCHAR(20) NOT NULL, body MEDIUMTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL, subreddit_id VARCHAR(10) NOT NULL, subreddit VARCHAR(20) NOT NULL, score INT, created_utc VARCHAR(10) NOT NULL)";
+        var sql = "CREATE TABLE comments (id VARCHAR(10) PRIMARY KEY, parent_id VARCHAR(10) NOT NULL, link_id VARCHAR(10) NOT NULL, name VARCHAR(20) NOT NULL, author VARCHAR(20) NOT NULL, body MEDIUMTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL, subreddit_id VARCHAR(10) NOT NULL, subreddit VARCHAR(30) NOT NULL, score INT NOT NULL, created_utc VARCHAR(10) NOT NULL)";
     } else {
-        var sql = "CREATE TABLE comments (id VARCHAR(10), parent_id VARCHAR(10), link_id VARCHAR(10), name VARCHAR(20), author VARCHAR(20), body MEDIUMTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, subreddit_id VARCHAR(10), subreddit VARCHAR(20), score INT, created_utc VARCHAR(10))";
+        var sql = "CREATE TABLE comments (id VARCHAR(10), parent_id VARCHAR(10), link_id VARCHAR(10), name VARCHAR(20), author VARCHAR(20), body MEDIUMTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci, subreddit_id VARCHAR(10), subreddit VARCHAR(30), score INT, created_utc VARCHAR(10))";
     }
 
     return new Promise((resolve) => {
@@ -192,9 +212,9 @@ function createCommentsTable(constraints) {
  */
 function dropCommentsTable () {
     var sql = "DROP TABLE comments";
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         con.query(sql, function (err, result) {
-            if (err) throw err;
+            if (err) reject(err);
             console.log("Table deleted");
             resolve(result);
         });

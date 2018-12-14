@@ -1,1 +1,8 @@
-{"fileName": "RC_2011", "total records": 10550000, "totalTime": 480, "constraints": false}
+{"fileName": "RC_2011", "total records": 10557466, "totalTime": 480, "constraints": false}
+{"fileName": "RC_2011", "total records": 10557466, "totalTime": 494, "constraints": false}
+{"fileName": "RC_2012", "total records": 26080276, "totalTime": 1200, "constraints": false}
+{"fileName": "RC_2012", "total records": 26080276, "totalTime": 1185, "constraints": false}
+{"fileName": "RC_2011", "total records": 10557466, "totalTime": 565, "constraints": true}
+{"fileName": "RC_2011", "total records": 10557466, "totalTime": 586, "constraints": true}
+{"fileName": "RC_2012", "total records": 26080276, "totalTime": 1448, "constraints": true}
+{"fileName": "RC_2012", "total records": 26080276, "totalTime": 1435, "constraints": true}

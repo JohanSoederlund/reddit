@@ -8,7 +8,7 @@ FROM
     FROM
         comments
     WHERE
-        author = 'johan') AS u1
+        author = 'adomorn') AS u1
 WHERE
     c1.link_id = u1.link_id AND
 	c1.author <> u1.author

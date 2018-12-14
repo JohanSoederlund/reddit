@@ -8,7 +8,7 @@ FROM
     FROM
         comments
     WHERE
-        link_id = 't3_5yba3') AS u1
+        link_id = 't3_if08x') AS u1
 WHERE
     c1.author = u1.author
         AND u1.subreddit <> c1.subreddit

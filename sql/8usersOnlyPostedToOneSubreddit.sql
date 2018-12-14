@@ -1,4 +1,4 @@
-SELECT 
+SELECT DISTINCT
     author, subreddit
 FROM
     comments c1
